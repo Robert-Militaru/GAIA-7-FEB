@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GAIA 7 Februarie?</title>
+
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg1: #383838;
+      --bg2: #383838;
+      --card: #ffffffcc;
+      --yes: rgb(60, 167, 75);
+      --yesHover: rgb(60, 167, 75);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      font-family: system-ui, sans-serif;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    /* FULL-SCREEN CONFETTI CANVAS */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .card {
+      width: min(720px, 92vw);
+      padding: 26px 22px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+    }
+
+    .art {
+      width: min(260px, 80vw);
+      margin: 0 auto 10px;
+      display: block;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+    }
+
+    h1 {
+      font-size: clamp(26px, 4vw, 44px);
+      margin: 12px 0 18px;
+    }
+
+    .button-zone {
+      position: relative;
+      width: min(520px, 92%);
+      height: 150px;
+      margin: 0 auto;
+      touch-action: none;
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.14);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    #yesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: #fff;
+    }
+    #yesBtn:hover { background: var(--yesHover); }
+
+    #noBtn {
+      left: 62%;
+      top: 20px;
+      transform: none;
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      animation: pop .35s ease;
+    }
+
+    .result h2 {
+      font-size: clamp(30px, 4.5vw, 46px);
+      margin: 10px 0;
+    }
+
+    .fireworks {
+      width: min(380px, 90vw);
+      margin: 0 auto;
+      display: block;
+    }
+
+    @keyframes pop {
+      from { transform: scale(.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <main class="card">
+    <!-- ANIMAL WITH HEART -->
+    <img class="art" src="https://i.imgur.com/VUpACvx.jpeg" alt="GAIA">
+
+    <h1>mergem la GAIA pe 7 Februarie?</h1>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">DA</button>
+      <button id="noBtn">NU</button>
+    </section>
+
+    <!-- HINT -->
+    <div class="hint" id="hint">“NU” este putin mai timid 😈</div>
+
+    <section class="result" id="result">
+      <h2>YAY! 🎉</h2>
+      <img
+        class="fireworks"
+        src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaW1ka3hidXhoMnRpNHZwamwxcnZ4c2E3eTQ4Zndob2Q4Z2NuNmx6eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/K4o1c3zfNQH59jWqSv/giphy.gif"
+        alt="Fireworks"
+      />
+    </section>
+  </main>
+
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+
+    noBtn.style.left = "60%";
+    noBtn.style.top = "40px";
+
+    /* ---------- CONFETTI ---------- */
+    const confettiCanvas = document.getElementById("confettiCanvas");
+
+    function resizeConfettiCanvas() {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      confettiCanvas.width = Math.floor(window.innerWidth * dpr);
+      confettiCanvas.height = Math.floor(window.innerHeight * dpr);
+      confettiCanvas.style.width = "100vw";
+      confettiCanvas.style.height = "100vh";
+    }
+
+    resizeConfettiCanvas();
+    window.addEventListener("resize", resizeConfettiCanvas);
+    window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
+
+    const confettiInstance = confetti.create(confettiCanvas, {
+      resize: false,
+      useWorker: true
+    });
+
+    function fullScreenConfetti() {
+      const end = Date.now() + 1600;
+
+      (function frame() {
+        confettiInstance({
+          particleCount: 12,
+          spread: 90,
+          startVelocity: 45,
+          ticks: 180,
+          origin: { x: Math.random(), y: Math.random() * 0.3 }
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+
+      setTimeout(() => {
+        confettiInstance({
+          particleCount: 300,
+          spread: 140,
+          startVelocity: 60,
+          ticks: 220,
+          origin: { x: 0.5, y: 0.55 }
+        });
+      }, 300);
+    }
+
+    /* ---------- YES BUTTON GROWS ---------- */
+    let yesScale = 1;
+    function growYes() {
+      yesScale = Math.min(2.2, yesScale + 0.1);
+      yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+    }
+
+    /* ---------- NO BUTTON RUNS AWAY ---------- */
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function moveNo(px, py) {
+      const z = zone.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      let dx = Math.random() > 0.5 ? 1 : -1;
+      let dy = Math.random() > 0.5 ? 1 : -1;
+
+      let newLeft = (b.left - z.left) + dx * 160;
+      let newTop  = (b.top - z.top) + dy * 120;
+
+      newLeft = clamp(newLeft, 0, z.width - b.width);
+      newTop  = clamp(newTop, 0, z.height - b.height);
+
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top  = newTop + "px";
+
+      growYes();
+    }
+
+    zone.addEventListener("pointermove", e => {
+      moveNo(e.clientX, e.clientY);
+    });
+
+    zone.addEventListener("pointerdown", e => {
+      moveNo(e.clientX, e.clientY);
+    });
+
+    noBtn.addEventListener("click", e => e.preventDefault());
+
+    /* ---------- YES CLICK ---------- */
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      hint.style.display = "none";     // HIDE THE HINT
+      result.style.display = "block";
+      resizeConfettiCanvas();
+      fullScreenConfetti();
+    });
+  </script>
+</body>
+</html>
+
+
+
